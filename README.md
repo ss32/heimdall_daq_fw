@@ -18,7 +18,7 @@ Alternatively, if you are on another system see our Wiki at for Docker and Virtu
 
 ## Manual Installation
 
-Manual install is only required if you are not using the premade images, and are setting up the software from a clean system. If you just want to run the DoA or PR software using a premade image please take a look at our Wiki https://github.com/krakenrf/krakensdr_docs/wiki, specifically the "Direction Finding Quickstart Guide", and the "VirtualBox, Docker Images and Install Scripts" sections.
+Manual install is only required if you are not using the premade images, and are setting up the software from a clean system. If you just want to run the DoA or PR software please take a look at a forked repo of the PR code at https://github.com/ss32/krakensdr_pr
 
 ### Install script
 
@@ -39,7 +39,7 @@ Steps prefixed with [ARM] should only be run on ARM systems. Steps prefixed with
 1. Install build dependencies
 ```
 sudo apt update
-sudo apt install build-essential git cmake libusb-1.0-0-dev lsof libzmq3-dev
+sudo apt install build-essential git cmake libusb-1.0-0-dev lsof libzmq3-dev python3-pip
 ```
 
 If you are using a KerberosSDR on a Raspberry Pi 4 with the third party switches by Corey Koval, or an equivalent switch board:
@@ -114,59 +114,15 @@ Run ldconfig to reset library cache:
 sudo ldconfig
 ```
 
-4. Install Miniforge
+4. Set up the Python Environment
 
-Install via the appropriate script for the system you are using (ARM aarch64 / x86_64)
-
-[ARM]
-```
-cd
-wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh
-chmod ug+x Miniforge3-Linux-aarch64.sh
-./Miniforge3-Linux-aarch64.sh
-```
-Read the license agreement and select ENTER or [yes] for all questions and wait a few minutes for the installation to complete.
-
-[x86_64]
-```
-cd
-wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
-chmod ug+x Miniforge3-Linux-x86_64.sh
-./Miniforge3-Linux-x86_64.sh
-```
-
-Restart the Pi, or logout, then log on again.
-
-```
-sudo reboot
-```
-
-Disable the default base environment.
-
-```
-conda config --set auto_activate_base false
-```
-
-Restart the Pi, or logout, then log on again.
-
-```
-sudo reboot
-```
-
-5. Setup the Miniconda Environment
+**Note**: The versions in `requirements.txt` are known to work with `krakensdr_pr` but it is possible newer versions will work as well
 
 ``` 
-conda create -n kraken python=3.9.7
-conda activate kraken
-
-conda install scipy==1.9.3
-conda install numba==0.56.4
-conda install configparser
-conda install pyzmq
-conda install scikit-rf 
+python3 -m pip install -r requirements.txt -U
 ```
 
-6. Create a root folder and clone the Heimdall DAQ Firmware
+5. Create a root folder and clone the Heimdall DAQ Firmware
 
 ```
 cd
@@ -177,7 +133,7 @@ git clone https://github.com/krakenrf/heimdall_daq_fw
 cd heimdall_daq_fw
 ```
 
-7. Build Heimdall C files
+6. Build Heimdall C files
 
 Browse to the _daq_core folder
 
@@ -216,9 +172,7 @@ make
 If you are running a machine with an Intel x86_64 CPU, you can install the highly optimized Intel MKL BLAS and Intel SVML libraries for a significant speed boost. Installing on AMD CPUs can also help.
 
 ```
-conda activate kraken
-conda install "blas=*=mkl"
-conda install -c numba icc_rt
+python3 -m pip install mkl numba icc_rt -U
 ```
 
 ## Next Steps:
